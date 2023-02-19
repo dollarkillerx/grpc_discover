@@ -93,6 +93,44 @@ func (r *RedisPlugin) AutoUnRegister(serverID string) {
 	})
 }
 
+func (r *RedisPlugin) DiscoverByServerName(serverName string) ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := r.client.Keys(ctx, getServerIDPrefix(serverName)+"*").Result()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 {
+		return nil, ErrServiceNotFound
+	}
+
+	var srvAddress []string
+
+	for _, v := range result {
+		val, err := r.client.Get(context.TODO(), v).Result()
+		if err != nil {
+			continue
+		}
+		srvAddress = append(srvAddress, val)
+	}
+
+	return srvAddress, nil
+}
+
+func (r *RedisPlugin) DiscoverByServerID(serverID string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	val, err := r.client.Get(ctx, serverID).Result()
+	if err != nil {
+		return "", err
+	}
+
+	return val, nil
+}
+
 func (r *RedisPlugin) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	rc := &redisResolver{
 		target: target,

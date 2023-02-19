@@ -61,6 +61,45 @@ func (c *ConsulPlugin) AutoUnRegister(serverID string) {
 	})
 }
 
+func (c *ConsulPlugin) DiscoverByServerName(serverName string) ([]string, error) {
+	//只获取健康的service
+	serviceHealthy, _, err := c.client.Health().Service(serverName, "", true, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(serviceHealthy) == 0 {
+		return nil, ErrServiceNotFound
+	}
+
+	var srvAddress []string
+
+	for _, v := range serviceHealthy {
+		srvAddress = append(srvAddress, fmt.Sprintf("%s:%d", v.Service.Address, v.Service.Port))
+	}
+
+	return srvAddress, nil
+}
+
+func (c *ConsulPlugin) DiscoverByServerID(serverID string) (string, error) {
+	serviceHealthy, _, err := c.client.Health().Service(getServerNameByIDConsulVersion(serverID), "", true, nil)
+	if err != nil {
+		return "", err
+	}
+
+	if len(serviceHealthy) == 0 {
+		return "", ErrServiceNotFound
+	}
+
+	for _, v := range serviceHealthy {
+		if v.Service.ID == serverID {
+			return fmt.Sprintf("%s:%d", v.Service.Address, v.Service.Port), nil
+		}
+	}
+
+	return "", ErrServiceNotFound
+}
+
 func (c *ConsulPlugin) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	rc := &consulResolver{
 		target: target,

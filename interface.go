@@ -7,6 +7,9 @@ type GrpcDiscoverPluginInterface interface {
 	UnRegister(serverID string) error
 	AutoUnRegister(serverID string)
 
+	DiscoverByServerName(serverName string) ([]string, error)
+	DiscoverByServerID(serverID string) (string, error)
+
 	Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error)
 	Scheme() string
 }

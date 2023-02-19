@@ -104,6 +104,39 @@ func (e *ETCDPlugin) AutoUnRegister(serverID string) {
 	})
 }
 
+func (e *ETCDPlugin) DiscoverByServerName(serverName string) ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	get, err := e.kv.Get(ctx, getServerIDPrefix(serverName), clientv3.WithPrefix())
+	if err != nil {
+		return nil, err
+	}
+
+	var srvAddress []string
+
+	for _, v := range get.Kvs {
+		srvAddress = append(srvAddress, string(v.Value))
+	}
+
+	return srvAddress, nil
+}
+
+func (e *ETCDPlugin) DiscoverByServerID(serverID string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	get, err := e.kv.Get(ctx, serverID)
+	if err != nil {
+		return "", err
+	}
+
+	if len(get.Kvs) != 1 {
+		return "", ErrServiceNotFound
+	}
+	return string(get.Kvs[0].Value), nil
+}
+
 func (e *ETCDPlugin) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	r := &etcdResolver{
 		target: target,
