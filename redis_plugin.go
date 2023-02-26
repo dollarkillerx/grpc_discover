@@ -158,7 +158,7 @@ func (e *redisResolver) ResolveNow(options resolver.ResolveNowOptions) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := e.r.client.Keys(ctx, getServerIDPrefix(e.target.Endpoint)+"*").Result()
+	result, err := e.r.client.Keys(ctx, getServerIDPrefix(e.target.Endpoint())+"*").Result()
 	if err != nil {
 		log.Printf("[GRPC Discover][Redis Pugin] ResolveNow %s:///%s Error: %s \n", e.target.Scheme, e.target.Endpoint, err)
 		return

@@ -8,9 +8,9 @@ require (
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/rs/xid v1.4.0
 	go.etcd.io/etcd/client/v3 v3.5.7
-	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f
-	google.golang.org/grpc v1.41.0
-	google.golang.org/protobuf v1.26.0
+	golang.org/x/net v0.7.0
+	google.golang.org/grpc v1.53.0
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -38,6 +38,6 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.3.6 // indirect
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
+	golang.org/x/text v0.7.0 // indirect
+	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923 // indirect
 )

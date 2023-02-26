@@ -164,7 +164,7 @@ func (e *etcdResolver) ResolveNow(options resolver.ResolveNowOptions) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	get, err := e.e.kv.Get(ctx, getServerIDPrefix(e.target.Endpoint), clientv3.WithPrefix())
+	get, err := e.e.kv.Get(ctx, getServerIDPrefix(e.target.Endpoint()), clientv3.WithPrefix())
 	if err != nil {
 		log.Printf("[GRPC Discover][ETCD Pugin] ResolveNow %s:///%s Error: %s \n", e.target.Scheme, e.target.Endpoint, err)
 		return

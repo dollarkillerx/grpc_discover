@@ -125,7 +125,7 @@ type consulResolver struct {
 
 func (e *consulResolver) ResolveNow(options resolver.ResolveNowOptions) {
 	//只获取健康的service
-	serviceHealthy, _, err := e.c.client.Health().Service(e.target.Endpoint, "", true, nil)
+	serviceHealthy, _, err := e.c.client.Health().Service(e.target.Endpoint(), "", true, nil)
 	if err != nil {
 		log.Printf("[GRPC Discover][Consul Pugin] ResolveNow %s:///%s Error: %s \n", e.target.Scheme, e.target.Endpoint, err)
 		return
